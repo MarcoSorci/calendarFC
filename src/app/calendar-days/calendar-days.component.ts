@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { throwError } from 'rxjs';
 import { Day } from './day';
 
 @Component({
@@ -14,11 +15,12 @@ export class CalendarDaysComponent implements OnInit {
   currentMonth = this.date.getMonth();
   firstDay!: Day;
   isLeapYear: boolean = false;
-
+  @Input() selectedDay?: Day;
   constructor() { }
 
-  ngOnInit(): void {
-    this.daysInMonth = this.getMonth(this.currentMonth, this.currentYear);    
+
+  ngOnInit(): void {    
+    this.daysInMonth = this.getMonth(this.currentMonth, this.currentYear);
   }
   
 
@@ -31,6 +33,9 @@ export class CalendarDaysComponent implements OnInit {
     day.year = this.currentYear;
     day.weekDayNumber = new Date(year, monthIndex, dayNumber - 1).getDay(); // REMOVE 1 FROM DAY BECAUSE 1st of May is SUNDAY (not MONDAY)
     day.weekDayName = day.getWeekDayName(day.weekDayNumber);
+    if (this.date.getDate() == day.day && this.date.getMonth() == day.monthIndex && this.date.getFullYear() == day.year) {
+      day.isToday = true;
+    }
     return day;
   }
 
@@ -40,21 +45,44 @@ export class CalendarDaysComponent implements OnInit {
   // return last day of month with .getDate();
   // for each day in a month create a DAY object and push into the DAYS array
   getMonth(monthIndex: number, year:number) {
-    let day = [];
-    let countDaysInMonth = new Date(year, monthIndex + 1, 0).getDate(); 
-    let countDaysInPrevMonth = new Date(year, monthIndex, 0).getDate();
-
-    let lastPrevDay = this.createDay(countDaysInPrevMonth, monthIndex-1, year);
+    let day: Day[] = [];
     this.firstDay = this.createDay(1, monthIndex, year);
-    
-    for (let i = 1; i <= this.firstDay.weekDayNumber; i++) {
-      day.unshift(this.createDay(lastPrevDay.day, monthIndex - 1, year));
+
+    this.getPreviousDays(day, monthIndex - 1, year);
+    this.getCurrentDays(day, monthIndex, year);
+    this.getFollowingDays(day, monthIndex, year);
+
+    return day;
+  }
+
+
+  getPreviousDays(day: Day[], monthIndex: number, year: number) {
+    let countDaysInPrevMonth = new Date(year, monthIndex, 0).getDate();
+    let lastPrevDay = this.createDay(countDaysInPrevMonth, monthIndex, year);
+    for (let i = 1; i < this.firstDay.weekDayNumber +1; i++) {
+      day.unshift(this.createDay(lastPrevDay.day, monthIndex, year));
       lastPrevDay.day --;
     }
+  }
+
+  getCurrentDays(day: Day[], monthIndex: number, year: number) {
+    let countDaysInMonth = new Date(year, monthIndex + 1, 0).getDate(); 
     for (let i = 1; i < countDaysInMonth + 1; i++) { 
       day.push(this.createDay(i, monthIndex, year));
     }
-    return day;
+  }
+
+  getFollowingDays(day: Day[], monthIndex: number, year: number) {
+    let countDaysInMonth = new Date(year, monthIndex + 1, 0).getDate(); 
+    let lastDay = this.createDay(countDaysInMonth, monthIndex, year);
+    for (let i = lastDay.weekDayNumber; i < 6; i++) {
+      day.push(this.createDay(this.firstDay.day, monthIndex + 1, year));
+      this.firstDay.day++;
+    }
+  }
+
+  onDaySelected(day: Day) {
+    this.selectedDay = day;
   }
 
 

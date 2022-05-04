@@ -5,6 +5,7 @@ export class Day {
     monthIndex!: number;
     weekDayName!: string;
     weekDayNumber!: number;
+    isToday?: boolean;
 
     public getMonthName(monthIndex: number): string {
         switch (monthIndex) {

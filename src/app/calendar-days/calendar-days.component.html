@@ -1,51 +1,38 @@
-<button (click)="goToPreviousMonth()">PREVIOUS</button>
-<button (click)="goToNextMonth()">NEXT</button>
 
-<h1>CURRENT MONTH</h1>
-<div class="days-of-week-container">
-    <div class="week-day">Monday</div>
-    <div class="week-day">Tuesday</div>
-    <div class="week-day">Wednesday</div>
-    <div class="week-day">Thursday</div>
-    <div class="week-day">Friday</div>
-    <div class="week-day">Saturday</div>
-    <div class="week-day">Sunday</div>
-    
-</div>
-<div class="calendar-container" >
-    <div *ngFor="let day of daysInMonth">
-        <div *ngIf="day.weekDayNumber == 6">{{day.day}} {{day.month}}</div>
-        <div *ngIf="day.weekDayNumber == 5">{{day.day}}</div>
-        <div *ngIf="day.weekDayNumber == 4">{{day.day}}</div>
-        <div *ngIf="day.weekDayNumber == 3">{{day.day}}</div>
-        <div *ngIf="day.weekDayNumber == 2">{{day.day}}</div>
-        <div *ngIf="day.weekDayNumber == 1">{{day.day}}</div>
-        <div *ngIf="day.weekDayNumber == 0">{{day.day}}</div>
-    </div>
-</div>
-<!-- <div *ngFor="let day of daysInMonth" class="calendar-container">
-    <div *ngIf="day.weekDayNumber == 0">
-        <div  class="day">{{day.weekDayName}} {{day.day}} {{day.month}} {{day.year}}</div>
-    </div>
-    <div *ngIf="day.weekDayNumber == 1">
-        <div  class="day">{{day.weekDayName}} {{day.day}} {{day.month}} {{day.year}}</div>
+<div class="calendar-container-main">
+    <div class="calendar-header">
+        <div class="header-title-buttons">
+            <button class="button prev" (click)="goToPreviousMonth()"><img src="../../assets/lefts.svg" alt=""></button>
+            <h1 class="title">{{firstDay.month | uppercase}} {{firstDay.year}}</h1><br>
+            <button class="button next" (click)="goToNextMonth()"><img src="../../assets/rights.svg" alt=""></button>
+        </div>
+        <div class="selected-day">
+            <h3 *ngIf="!selectedDay">{{date.getDate()}} - {{date.getMonth()+1}} - {{date.getFullYear()}}</h3>
+            <h3 *ngIf="selectedDay" >{{selectedDay.day}} - {{selectedDay.monthIndex + 1}} - {{selectedDay.year}}</h3>
+        </div>
     </div>
     
-   
-</div> -->
-
-   
-
-
-
-
-<div class="container">
-    
+    <div class="days-of-week-container">
+        <div class="week-day">MON</div>
+        <div class="week-day">TUE</div>
+        <div class="week-day">WED</div>
+        <div class="week-day">THU</div>
+        <div class="week-day">FRI</div>
+        <div class="week-day">SAT</div>
+        <div class="week-day">SUN</div>
+    </div>
+    <div class="calendar-container" >
+        <div *ngFor="let day of daysInMonth" class="out">
+            <div class="days"
+            [ngClass]="day.monthIndex != currentMonth ? 'prev-next-month' : day.isToday ? 'current-day' : 'current-month'">
+                <p (click)="onDaySelected(day)">{{day.day}}</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- <div>
-    {{firstDay.day}} <span>{{firstDay.weekDayName}}</span> <span>{{firstDay.weekDayNumber}}</span>
-</div> -->
+
+
 
 
 
