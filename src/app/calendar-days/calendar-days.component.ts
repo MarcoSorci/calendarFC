@@ -8,97 +8,84 @@ import { Day } from './day';
 })
 export class CalendarDaysComponent implements OnInit {
 
-  days: number[] = [];
-  weekDay: number[] = [];
+  daysInMonth: Day[] = [];
   date = new Date();
   currentYear = this.date.getFullYear();
   currentMonth = this.date.getMonth();
+  firstDay!: Day;
+  isLeapYear: boolean = false;
 
   constructor() { }
 
   ngOnInit(): void {
-    console.log(this.createDay(3, 4, 2022))
-  }
-
-  getMonthName(monthIndex: number): string {
-    switch (monthIndex) {
-      case 0:
-        return 'January';
-      case 1:
-        return 'February';
-      case 2:
-        return 'March';
-      case 3:
-        return 'April';
-      case 4:
-        return 'May';
-      case 5:
-        return 'June';
-      case 6:
-        return 'July';
-      case 7:
-        return 'August';
-      case 8:
-        return 'September';
-      case 9:
-        return 'October';
-      case 10:
-        return 'November';
-      case 11:
-        return 'December';
-      default:
-        return '';
-    }
-  }
-
-  getWeekDayName(weekDay: number): string {
-    switch (weekDay) {
-      case 0:
-        return 'Sun';
-      case 1:
-        return 'Mon';
-      case 2:
-        return 'Tue';
-      case 3:
-        return 'Wed';
-      case 4:
-        return 'Thu';
-      case 5:
-        return 'Fri';
-      case 6:
-        return 'Sat';
-      default:
-        return '';
-    }
+    this.daysInMonth = this.getMonth(this.currentMonth, this.currentYear);    
   }
   
-  createDay(dayNumber: number, monthIndex: number, year: number) {
+
+  // create a Day object with property day, month, year and weekDayNumber (from 0 to 6 MON-SUN)
+  createDay(dayNumber: number, monthIndex: number, year: number) { 
     let day = new Day();
     day.day = dayNumber;
     day.monthIndex = monthIndex;
-    day.month = this.getMonthName(monthIndex);
+    day.month = day.getMonthName(monthIndex);
     day.year = this.currentYear;
-    day.weekDayNumber = new Date(year, monthIndex, dayNumber).getDay();
-    day.weekDayName = this.getWeekDayName(day.weekDayNumber);
+    day.weekDayNumber = new Date(year, monthIndex, dayNumber - 1).getDay(); // REMOVE 1 FROM DAY BECAUSE 1st of May is SUNDAY (not MONDAY)
+    day.weekDayName = day.getWeekDayName(day.weekDayNumber);
     return day;
   }
 
 
+  // create an array of DAYS based on the month selected and the year
+  // -> first day of each month is the 1st
+  // return last day of month with .getDate();
+  // for each day in a month create a DAY object and push into the DAYS array
   getMonth(monthIndex: number, year:number) {
-    let days = [];
-    let firstDay = this.createDay(1, monthIndex, year);
-    let countDaysInMonth = new Date(year, monthIndex, 0).getDate();
-    for (let i = 1; i < countDaysInMonth + 1; i++) {
-      days.push(this.createDay(i, monthIndex, year));
-    }
-  }
-  // getStartingDay(date = new Date){
-  //   let year = date.getFullYear();
-  //   let month = date.getMonth();
-  //   let firstDayOfMonth = new Date(year, month, 1).getTime(); 
-  //   console.log(firstDayOfMonth);
+    let day = [];
+    let countDaysInMonth = new Date(year, monthIndex + 1, 0).getDate(); 
+    let countDaysInPrevMonth = new Date(year, monthIndex, 0).getDate();
+
+    let lastPrevDay = this.createDay(countDaysInPrevMonth, monthIndex-1, year);
+    this.firstDay = this.createDay(1, monthIndex, year);
     
-  // }
+    for (let i = 1; i <= this.firstDay.weekDayNumber; i++) {
+      day.unshift(this.createDay(lastPrevDay.day, monthIndex - 1, year));
+      lastPrevDay.day --;
+    }
+    for (let i = 1; i < countDaysInMonth + 1; i++) { 
+      day.push(this.createDay(i, monthIndex, year));
+    }
+    return day;
+  }
+
+
+  // button click event to go to next month
+  goToNextMonth() {
+    this.currentMonth++; //NB: doesn't work with + 1 (only ++)
+    if (this.currentMonth == 12) {
+      this.currentMonth = 1;
+      this.currentYear++;
+    }
+    this.daysInMonth = this.getMonth(this.currentMonth, this.currentYear); //RE-CALCULATE how many days are in the selected month   
+  }
+
+
+  // button click event to go to previous month
+  goToPreviousMonth() {
+    this.currentMonth--;
+    if (this.currentMonth < 0) {
+      this.currentMonth = 11;
+      this.currentYear--;
+    }
+    this.daysInMonth = this.getMonth(this.currentMonth, this.currentYear); //RE-CALCULATE how many days are in the selected month 
+  }
+
+
+  // NO NEED TO CALCULATE LEAP YEAR SINCE IT'S ALREADY DONE BY THE GETDATE();
+  calculateLeapYear(year: number) {
+    return this.isLeapYear = (year % 4 == 0 && year % 100 != 0) ? true : (year % 400 == 0) ? true : false;
+  }
+
+  
 
 
 }

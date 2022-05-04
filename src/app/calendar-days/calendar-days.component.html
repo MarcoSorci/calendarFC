@@ -1,1 +1,51 @@
-<p>calendar-days works!</p>
+<button (click)="goToPreviousMonth()">PREVIOUS</button>
+<button (click)="goToNextMonth()">NEXT</button>
+
+<h1>CURRENT MONTH</h1>
+<div class="days-of-week-container">
+    <div class="week-day">Monday</div>
+    <div class="week-day">Tuesday</div>
+    <div class="week-day">Wednesday</div>
+    <div class="week-day">Thursday</div>
+    <div class="week-day">Friday</div>
+    <div class="week-day">Saturday</div>
+    <div class="week-day">Sunday</div>
+    
+</div>
+<div class="calendar-container" >
+    <div *ngFor="let day of daysInMonth">
+        <div *ngIf="day.weekDayNumber == 6">{{day.day}} {{day.month}}</div>
+        <div *ngIf="day.weekDayNumber == 5">{{day.day}}</div>
+        <div *ngIf="day.weekDayNumber == 4">{{day.day}}</div>
+        <div *ngIf="day.weekDayNumber == 3">{{day.day}}</div>
+        <div *ngIf="day.weekDayNumber == 2">{{day.day}}</div>
+        <div *ngIf="day.weekDayNumber == 1">{{day.day}}</div>
+        <div *ngIf="day.weekDayNumber == 0">{{day.day}}</div>
+    </div>
+</div>
+<!-- <div *ngFor="let day of daysInMonth" class="calendar-container">
+    <div *ngIf="day.weekDayNumber == 0">
+        <div  class="day">{{day.weekDayName}} {{day.day}} {{day.month}} {{day.year}}</div>
+    </div>
+    <div *ngIf="day.weekDayNumber == 1">
+        <div  class="day">{{day.weekDayName}} {{day.day}} {{day.month}} {{day.year}}</div>
+    </div>
+    
+   
+</div> -->
+
+   
+
+
+
+
+<div class="container">
+    
+</div>
+
+<!-- <div>
+    {{firstDay.day}} <span>{{firstDay.weekDayName}}</span> <span>{{firstDay.weekDayNumber}}</span>
+</div> -->
+
+
+
